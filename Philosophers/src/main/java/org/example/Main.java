@@ -1,7 +1,7 @@
 package org.example;
 import java.util.concurrent.Semaphore;
 
-public class  add Main {
+public class Main {
     static int time_to_die;
     static int time_to_eat;
     static int time_to_sleep;

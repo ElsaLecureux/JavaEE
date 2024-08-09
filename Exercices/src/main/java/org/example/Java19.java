@@ -3,22 +3,21 @@ package org.example;
 public class Java19 {
     public static class Singleton{
 
-        private static Singleton instance;
-        public String value;
+        private static Singleton instance = null;
 
-        private Singleton(String value){
-            this.value = value;
+        private Singleton(){
+            System.out.println("Singleton instance created.");
         }
-        public static Singleton getInstance(String value) {
+        public static Singleton getInstance() {
             if(instance == null) {
-                instance = new Singleton(value);
+                instance = new Singleton();
             }
             return instance;
         }
     }
 
     public static void main(String[] args) {
-        Singleton.getInstance("");
-        System.out.println("Singleton instance created.");
+        Singleton.getInstance();
+
     }
 }
