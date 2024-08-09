@@ -45,8 +45,6 @@ public class Arbitrator implements Runnable {
                         Thread.currentThread().interrupt();
                     }
                 }
-                // pause thread
-                philosopher.eat();
             }
         }
     }

@@ -25,5 +25,8 @@ public class Main {
             philosophers[i] = new Philosopher(i + 1, 601, 200, 200, forks);
             new Thread(philosophers[i]).start();
         }
+
+        Arbitrator arbitrator = new Arbitrator(philosophers);
+        new Thread(arbitrator).start();
     }
 }
