@@ -16,8 +16,8 @@ public class Philosopher implements Runnable {
     long lastTimeAte = System.currentTimeMillis();
 
     // for Mutex not semaphore though
-    Semaphore forkLeft;
-    Semaphore forkRight;
+    //Mutex forkLeft;
+    //Mutex forkRight;
 
     boolean isWaitingForAFork = false;
 
@@ -62,18 +62,8 @@ public class Philosopher implements Runnable {
     }
 
     public void checkIfAlive() {
-        System.out.println((this.lastTimeAte - this.startingTime));
         if ((this.lastTimeAte - this.startingTime) > this.time_to_die) {
             isAlive = false;
-        }
-    }
-
-    public synchronized void grabFork(){
-        try {
-            forks.acquire(1);
-        } catch (InterruptedException e) {
-            System.out.println("Philosopher " + number + " is waiting for a fork");
-            Thread.currentThread().interrupt();
         }
     }
 
@@ -82,6 +72,9 @@ public class Philosopher implements Runnable {
     }
 
     public void run() {
-
+        while (isAlive) {
+            isWaitingForAFork = true;
+            checkIfAlive();
+        }
     }
 }

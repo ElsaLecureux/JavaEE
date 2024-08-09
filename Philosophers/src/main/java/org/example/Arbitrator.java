@@ -3,6 +3,7 @@ package org.example;
 public class Arbitrator implements Runnable {
 
     //receives all philosophers
+
     private final Philosopher[] philosophers;
 
     public Arbitrator(Philosopher[] philosophers) {
@@ -12,43 +13,38 @@ public class Arbitrator implements Runnable {
     // controls each thread to make sure they have the correct behavior
     @Override
     public void run(){
-        for(Philosopher philosopher : philosophers){
-            if(philosopher.isWaitingForAFork) {
-
-                while (philosopher.isAlive) {
-                    try {
-                        philosopher.isWaitingForAFork = true;
-                        philosopher.forks.acquire(1);
+        while (true) {
+            for(Philosopher philosopher : philosophers){
+                synchronized (philosopher) {
+                    if (philosopher.isWaitingForAFork && philosopher.isAlive) {
+                        philosopher.isWaitingForAFork = false;
                         try {
                             philosopher.forks.acquire(1);
-                            philosopher.isWaitingForAFork = false;
-                            philosopher.checkIfAlive();
-                            if(philosopher.isAlive) {
-                                philosopher.eat();
-                                philosopher.forks.release(1);
-                                philosopher.forkIsReleased = true;
-                                philosopher.forks.release(1);
-                                philosopher.forkIsReleased = true;
-                                philosopher.sleep();
-                                philosopher.think();
-                            } else {
-                                System.out.println("Philosopher " + philosopher.number + " is dead");
+                            try {
+                                philosopher.forks.acquire(1);
+                                philosopher.checkIfAlive();
+                                if (philosopher.isAlive) {
+                                    philosopher.eat();
+                                    philosopher.forks.release(1);
+                                    philosopher.forks.release(1);
+                                    philosopher.sleep();
+                                    philosopher.think();
+                                } else {
+                                    System.out.println("Philosopher " + philosopher.number + " is dead");
 
-                                //Stop program;
+                                    //Stop program;
+                                }
+                            } catch (InterruptedException e) {
+                                System.out.println("Philosopher " + philosopher.number + " is waiting for a fork");
+                                Thread.currentThread().interrupt();
                             }
                         } catch (InterruptedException e) {
                             System.out.println("Philosopher " + philosopher.number + " is waiting for a fork");
                             Thread.currentThread().interrupt();
                         }
-                    } catch (InterruptedException e) {
-                        System.out.println("Philosopher " + philosopher.number + " is waiting for a fork");
-                        Thread.currentThread().interrupt();
                     }
                 }
             }
         }
     }
-
-    // kill thread if the behavior is incorrect
-
 }

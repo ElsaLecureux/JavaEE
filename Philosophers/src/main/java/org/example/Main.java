@@ -8,7 +8,7 @@ public class Main {
     static int number_of_philosophers = 5;
 
     //for Mutex idea of [] but not semaphore
-    //public static Semaphore[] forks = new Semaphore[number_of_philosophers];
+    //public static Mutex[] forks = new Mutex[number_of_philosophers];
 
         public static Philosopher[] philosophers = new Philosopher[number_of_philosophers];
 
@@ -18,6 +18,7 @@ public class Main {
 
         /*for Mutex for ( int i = 0; i < number_of_philosophers; i++ ){
             create one fork for each philosopher
+            Mutex forks = new Mutex(number_of_philosophers);
         }*/
 
         for ( int i = 0; i < number_of_philosophers; i++ ) {
