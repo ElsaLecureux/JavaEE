@@ -10,10 +10,12 @@ public class Arbitrator implements Runnable {
         this.philosophers = philosophers;
     }
 
+    boolean philosopherIsDead = false;
+
     // controls each thread to make sure they have the correct behavior
     @Override
     public void run(){
-        while (true) {
+        while (!philosopherIsDead) {
             for(Philosopher philosopher : philosophers){
                 synchronized (philosopher) {
                     if (philosopher.isWaitingForAFork && philosopher.isAlive) {
@@ -31,8 +33,8 @@ public class Arbitrator implements Runnable {
                                     philosopher.think();
                                 } else {
                                     System.out.println("Philosopher " + philosopher.number + " is dead");
-
-                                    //Stop program;
+                                    philosopherIsDead = false;
+                                    System.exit(0);
                                 }
                             } catch (InterruptedException e) {
                                 System.out.println("Philosopher " + philosopher.number + " is waiting for a fork");
@@ -46,5 +48,6 @@ public class Arbitrator implements Runnable {
                 }
             }
         }
+
     }
 }
