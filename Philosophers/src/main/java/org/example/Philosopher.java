@@ -19,6 +19,10 @@ public class Philosopher implements Runnable {
     Semaphore forkLeft;
     Semaphore forkRight;
 
+    boolean isWaitingForAFork = false;
+
+    boolean forkIsReleased = false;
+
     boolean isAlive = true;
 
     Philosopher(int number, int time_to_die, int time_to_eat, int time_to_sleep, Semaphore forks) {
@@ -27,6 +31,10 @@ public class Philosopher implements Runnable {
         this.time_to_eat = time_to_eat;
         this.time_to_sleep = time_to_sleep;
         this.forks = forks;
+
+        // In Mutex we need to have to keep track of which fork is grabbed
+        //this.forkLeft = forks[number];
+        //this.forkRight = forks[number + 1 % forks.length];
     }
 
     public void eat() {
@@ -39,11 +47,12 @@ public class Philosopher implements Runnable {
             }
     }
 
-    public void sleep() {
+    public void sleep(){
         System.out.println("Philosopher" + number + " is sleeping");
         try {
             Thread.sleep(time_to_sleep);
         } catch (InterruptedException e) {
+           //throwException(e);
             Thread.currentThread().interrupt();
         }
     }
@@ -53,38 +62,44 @@ public class Philosopher implements Runnable {
     }
 
     public void checkIfAlive() {
-        System.out.println(this.time_to_die );
-        if (this.lastTimeAte - this.startingTime > this.time_to_die) {
+        System.out.println((this.lastTimeAte - this.startingTime));
+        if ((this.lastTimeAte - this.startingTime) > this.time_to_die) {
             isAlive = false;
         }
     }
 
+    public synchronized void grabFork(){
+        try {
+            forks.acquire(1);
+        } catch (InterruptedException e) {
+            System.out.println("Philosopher " + number + " is waiting for a fork");
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    static void throwException(InterruptedException e) throws Exception{
+        throw new Exception(e);
+    }
+
     public void run() {
         while (isAlive) {
-            try {
-               // System.out.println("Philosopher " + number + " is trying to acquire a fork");
-                forks.acquire(1);
-                try {
-                   // System.out.println("Philosopher " + number + " is trying to acquire second fork");
-                    forks.acquire(1);
-                   // System.out.println("Philosopher " + number + " has acquired 2 forks")
+                    grabFork();
+                    grabFork();
+                    isWaitingForAFork = false;
                     checkIfAlive();
                     if(isAlive) {
                         eat();
-                        //System.out.println("Philosopher " + number + " is releasing 2 forks");
                         forks.release(1);
+                        forkIsReleased = true;
                         forks.release(1);
+                        forkIsReleased = true;
                         sleep();
                         think();
+
                     } else {
                         System.out.println("Philosopher " + number + " is dead");
+                        //Stop program;
                     }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
         }
     }
 }
