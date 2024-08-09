@@ -2,9 +2,9 @@ package org.example;
 import java.util.concurrent.Semaphore;
 
 public class Main {
-    static int time_to_die;
-    static int time_to_eat;
-    static int time_to_sleep;
+    static int time_to_die = 600;
+    static int time_to_eat = 200;
+    static int time_to_sleep = 200;
     static int number_of_philosophers = 5;
 
     //for Mutex idea of [] but not semaphore
@@ -23,7 +23,7 @@ public class Main {
 
         for ( int i = 0; i < number_of_philosophers; i++ ) {
 
-            philosophers[i] = new Philosopher(i + 1, 601, 200, 200, forks);
+            philosophers[i] = new Philosopher(i + 1, time_to_die, time_to_eat, time_to_sleep, forks);
             new Thread(philosophers[i]).start();
         }
 

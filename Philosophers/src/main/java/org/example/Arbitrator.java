@@ -19,23 +19,16 @@ public class Arbitrator implements Runnable {
             for(Philosopher philosopher : philosophers){
                 synchronized (philosopher) {
                     if (philosopher.isWaitingForAFork && philosopher.isAlive) {
-                        philosopher.isWaitingForAFork = false;
                         try {
                             philosopher.forks.acquire(1);
                             try {
                                 philosopher.forks.acquire(1);
-                                philosopher.checkIfAlive();
-                                if (philosopher.isAlive) {
-                                    philosopher.eat();
-                                    philosopher.forks.release(1);
-                                    philosopher.forks.release(1);
-                                    philosopher.sleep();
-                                    philosopher.think();
-                                } else {
-                                    System.out.println("Philosopher " + philosopher.number + " is dead");
-                                    philosopherIsDead = false;
-                                    System.exit(0);
-                                }
+                                philosopher.isWaitingForAFork = false;
+                                philosopher.eat();
+                                philosopher.forks.release(1);
+                                philosopher.forks.release(1);
+                                philosopher.sleep();
+                                philosopher.think();
                             } catch (InterruptedException e) {
                                 System.out.println("Philosopher " + philosopher.number + " is waiting for a fork");
                                 Thread.currentThread().interrupt();
@@ -44,6 +37,10 @@ public class Arbitrator implements Runnable {
                             System.out.println("Philosopher " + philosopher.number + " is waiting for a fork");
                             Thread.currentThread().interrupt();
                         }
+                    } else if (!philosopher.isAlive) {
+                        System.out.println("Philosopher " + philosopher.number + " is dead");
+                        philosopherIsDead = true;
+                        System.exit(0);
                     }
                 }
             }
