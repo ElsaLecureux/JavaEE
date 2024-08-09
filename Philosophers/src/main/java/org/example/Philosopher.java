@@ -82,24 +82,6 @@ public class Philosopher implements Runnable {
     }
 
     public void run() {
-        while (isAlive) {
-                    grabFork();
-                    grabFork();
-                    isWaitingForAFork = false;
-                    checkIfAlive();
-                    if(isAlive) {
-                        eat();
-                        forks.release(1);
-                        forkIsReleased = true;
-                        forks.release(1);
-                        forkIsReleased = true;
-                        sleep();
-                        think();
 
-                    } else {
-                        System.out.println("Philosopher " + number + " is dead");
-                        //Stop program;
-                    }
-        }
     }
 }
