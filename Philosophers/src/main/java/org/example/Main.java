@@ -1,14 +1,26 @@
 package org.example;
+import java.util.concurrent.Semaphore;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
 public class Main {
+    static int number_of_philosophers = 5;
+
+    public static Semaphore[] forks = new Semaphore[number_of_philosophers];
+
+    public static Philosopher[] philosophers = new Philosopher[number_of_philosophers];
+
+    /*end program*/
+
 
     public static void main(String[] args) {
 
-        System.out.println("Hello philosophers!");
+        for ( int i = 0; i < number_of_philosophers ; i++ ) {
+            forks[i] = new Semaphore(1);
+        }
 
-        Philosopher philosopher = new Philosopher();
-        new Thread(philosopher).start();
+        for ( int i = 0; i < number_of_philosophers ; i++ ) {
+            philosophers[i] = new Philosopher(i, 601, 200, 200, forks);
+            new Thread(philosophers[i]).start();
+        }
+
     }
 }
